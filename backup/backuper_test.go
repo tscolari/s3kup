@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/s3up/backup"
+	"github.com/tscolari/s3up/backup"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
