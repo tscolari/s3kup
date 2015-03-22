@@ -10,14 +10,14 @@ type Client struct {
 	bucket *goamzs3.Bucket
 }
 
-func New(accessKeyID, accessKeySecret, bucketName, regionName, endPointURL string) *Client {
+func New(accessKeyID, accessKeySecret, bucketName, endPointURL string) *Client {
 	auth := aws.Auth{
 		AccessKey: accessKeyID,
 		SecretKey: accessKeySecret,
 	}
 
 	region := aws.Region{
-		Name:                 regionName,
+		Name:                 "bucketRegion",
 		S3LocationConstraint: true,
 		S3Endpoint:           endPointURL,
 	}

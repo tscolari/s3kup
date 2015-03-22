@@ -10,6 +10,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/s3up/backup"
 	"github.com/s3up/s3"
+	"github.com/s3up/s3/testhelpers"
 )
 
 var _ = Describe("Backuper", func() {
@@ -28,10 +29,10 @@ var _ = Describe("Backuper", func() {
 	var s3Bucket *goamzs3.Bucket
 
 	BeforeEach(func() {
-		client := s3.New(accessKey, secretKey, bucketName, regionName, s3EndpointURL)
+		client := s3.New(accessKey, secretKey, bucketName, s3EndpointURL)
 		backuper = backup.New(client, versionsToKeep)
 
-		s3Client = buildGoamzS3(accessKey, secretKey, regionName)
+		s3Client = testhelpers.BuildGoamzS3(accessKey, secretKey, s3EndpointURL)
 		s3Bucket = s3Client.Bucket(bucketName)
 		s3Bucket.PutBucket("")
 
