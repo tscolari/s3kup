@@ -34,8 +34,8 @@ func (b Backuper) Backup(fileName string, fileContent []byte) error {
 }
 
 func (b Backuper) putFile(fileName string, fileContent []byte) error {
-	timestamp := time.Now().Format(time.RFC3339)
-	fileName = fmt.Sprintf("%s/%s", fileName, timestamp)
+	timestamp := time.Now().UnixNano()
+	fileName = fmt.Sprintf("%s/%d", fileName, timestamp)
 	return b.s3Client.Store(fileName, fileContent)
 }
 

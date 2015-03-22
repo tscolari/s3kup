@@ -41,13 +41,13 @@ func (c *Client) Delete(path string) error {
 }
 
 func (c *Client) List(path string) ([]string, error) {
-	resp, err := c.bucket.List(path, "", "", 100)
+	resp, err := c.bucket.List(path+"/", "", "", 100)
 	if err != nil {
 		return []string{}, err
 	}
 
 	files := []string{}
-	for _, file := range resp.Contents[1:] {
+	for _, file := range resp.Contents {
 		files = append(files, file.Key)
 	}
 

@@ -3,6 +3,8 @@ package s3_test
 import (
 	"fmt"
 
+	"code.google.com/p/go-uuid/uuid"
+
 	"github.com/s3up/s3"
 
 	goamzs3 "github.com/mitchellh/goamz/s3"
@@ -16,13 +18,14 @@ var _ = Describe("Client", func() {
 		secretKey  string = "my_secret"
 		regionName string = "my_region"
 		bucketName string = "my_bucket"
-		filePath   string = "my/file"
 	)
 
 	var client *s3.Client
 	var bucket *goamzs3.Bucket
+	var filePath string
 
 	BeforeEach(func() {
+		filePath = uuid.New()
 		s3Client := buildGoamzS3(accessKey, secretKey, regionName)
 
 		bucket = s3Client.Bucket(bucketName)

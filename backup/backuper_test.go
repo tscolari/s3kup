@@ -61,7 +61,7 @@ var _ = Describe("Backuper", func() {
 		It("timestamps the version inside the given filename", func() {
 			err := backuper.Backup("file", []byte("content"))
 			Expect(err).ToNot(HaveOccurred())
-			Expect(receivedFileName).To(MatchRegexp(fmt.Sprintf("%s/\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}", "file")))
+			Expect(receivedFileName).To(MatchRegexp(fmt.Sprintf("^%s/\\d{19}$", "file")))
 		})
 
 		Context("when something fails", func() {
