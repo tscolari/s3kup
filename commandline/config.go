@@ -10,8 +10,8 @@ func initViperFlags(command *cobra.Command) {
 	viper.SetDefault("ssl", true)
 
 	viper.BindPFlag("endpoint-url", command.Flags().Lookup("endpoint-url"))
-	viper.BindPFlag("access-key-id", command.Flags().Lookup("access-key-id"))
-	viper.BindPFlag("access-key-secret", command.Flags().Lookup("access-key-secret"))
+	viper.BindPFlag("access-key", command.Flags().Lookup("access-key"))
+	viper.BindPFlag("secret-key", command.Flags().Lookup("secret-key"))
 	viper.BindPFlag("bucket-name", command.Flags().Lookup("bucket-name"))
 	viper.BindPFlag("file-name", command.Flags().Lookup("file-name"))
 	viper.BindPFlag("no-ssl", command.Flags().Lookup("no-ssl"))

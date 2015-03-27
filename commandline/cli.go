@@ -25,14 +25,13 @@ func mainCommand() *cobra.Command {
 		Short: "simple single file s3 backup tool",
 		Long:  `An easy way to backup any file/command output to a s3 bucket.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			accessKeyID := viper.GetString("access-key-id")
-			accessKeySecret := viper.GetString("access-key-secret")
-			bucketName := viper.GetString("bucket-name")
-			versionsToKeep := viper.GetInt("versions-to-keep")
-			fileName := viper.GetString("file-name")
-			endpointURL := getEndpointURL()
+			accessKey, secretKey, bucketName, fileName, endpointURL, versionsToKeep, err := fetchAndValidateParams()
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
 
-			s3Client := s3.New(accessKeyID, accessKeySecret, bucketName, endpointURL)
+			s3Client := s3.New(accessKey, secretKey, bucketName, endpointURL)
 			backuper := backup.New(s3Client, versionsToKeep)
 
 			content, err := getInputContent()
@@ -50,8 +49,8 @@ func mainCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringP("endpoint-url", "e", "s3.amazonaws.com", "the s3 region endpoint url (see http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region)")
-	cmd.Flags().StringP("access-key-id", "i", "", "AWS Access Key ID")
-	cmd.Flags().StringP("access-key-secret", "s", "", "AWS Access Key Secret")
+	cmd.Flags().StringP("access-key", "i", "", "AWS Access Key")
+	cmd.Flags().StringP("secret-key", "s", "", "AWS Secret Key")
 	cmd.Flags().StringP("bucket-name", "b", "", "Target S3 bucket")
 	cmd.Flags().StringP("file-name", "n", "", "How the file will be called on s3")
 	cmd.Flags().Bool("no-ssl", false, "Use ssl endpoint")
@@ -82,4 +81,30 @@ func getEndpointURL() string {
 		return fmt.Sprintf("https://%s", endpointURL)
 	}
 	return fmt.Sprintf("http://%s", endpointURL)
+}
+
+func fetchAndValidateParams() (accessKey, secretKey, bucketName, fileName, endpointURL string, versionsToKeep int, err error) {
+	if accessKey = viper.GetString("access-key"); accessKey == "" {
+		err = errors.New("missing access key argument")
+	}
+
+	if secretKey = viper.GetString("secret-key"); secretKey == "" {
+		err = errors.New("missing secret key argument")
+	}
+
+	if versionsToKeep = viper.GetInt("versions-to-keep"); versionsToKeep <= 0 {
+		err = errors.New("invalid versions to keep. Must be 1 or greater")
+	}
+
+	if fileName = viper.GetString("file-name"); fileName == "" {
+		err = errors.New("missing file name argument")
+	}
+
+	if bucketName = viper.GetString("bucket-name"); bucketName == "" {
+		err = errors.New("missing bucket name argument")
+	}
+
+	endpointURL = getEndpointURL()
+
+	return accessKey, secretKey, bucketName, fileName, endpointURL, versionsToKeep, err
 }
