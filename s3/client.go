@@ -16,19 +16,28 @@ func New(accessKeyID, accessKeySecret, bucketName, endPointURL string) *Client {
 		SecretKey: accessKeySecret,
 	}
 
-	region := aws.Region{
-		Name:                 "bucketRegion",
-		S3LocationConstraint: true,
-		S3Endpoint:           endPointURL,
-	}
+	region := getRegion(endPointURL)
 
 	s3 := goamzs3.New(auth, region)
 	bucket := s3.Bucket(bucketName)
-	bucket.PutBucket(goamzs3.Private)
 
 	return &Client{
 		s3:     s3,
 		bucket: bucket,
+	}
+}
+
+func getRegion(endPointURL string) aws.Region {
+	for _, region := range aws.Regions {
+		if region.S3Endpoint == endPointURL {
+			return region
+		}
+	}
+
+	return aws.Region{
+		Name:                 "custom",
+		S3Endpoint:           endPointURL,
+		S3LocationConstraint: true,
 	}
 }
 

@@ -12,7 +12,7 @@ func BuildGoamzS3(accessKey, secretKey, endpoint string) *s3.S3 {
 	}
 
 	region := aws.Region{
-		Name:                 "aRegion",
+		Name:                 "bucketRegion",
 		S3Endpoint:           endpoint,
 		S3LocationConstraint: true,
 	}

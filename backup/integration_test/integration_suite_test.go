@@ -10,7 +10,7 @@ import (
 
 func TestIntegration(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Integration Suite")
+	RunSpecs(t, "Backup Integration Suite")
 }
 
 var s3Server *s3test.Server
@@ -18,8 +18,7 @@ var s3EndpointURL string
 
 var _ = BeforeSuite(func() {
 	var err error
-	config := &s3test.Config{}
-	s3Server, err = s3test.NewServer(config)
+	s3Server, err = s3test.NewServer(nil)
 	if err != nil {
 		Expect(err).ToNot(HaveOccurred())
 	}

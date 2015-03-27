@@ -46,6 +46,14 @@ var _ = Describe("Backuper", func() {
 			data = []byte("file content")
 		})
 
+		It("returns an error when the bucket doesnt exist", func() {
+			client := s3.New(accessKey, secretKey, "newBucket", s3EndpointURL)
+			backuper = backup.New(client, versionsToKeep)
+
+			err := backuper.Backup(filePath, data)
+			Expect(err).To(MatchError("The specified bucket does not exist"))
+		})
+
 		It("creates a versioned file on s3", func() {
 			err := backuper.Backup(filePath, data)
 			Expect(err).ToNot(HaveOccurred())
