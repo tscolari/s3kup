@@ -14,4 +14,5 @@ func initViperFlags(command *cobra.Command) {
 	viper.BindPFlag("bucket-name", command.Flags().Lookup("bucket-name"))
 	viper.BindPFlag("file-name", command.Flags().Lookup("file-name"))
 	viper.BindPFlag("versions-to-keep", command.Flags().Lookup("versions-to-keep"))
+	viper.BindPFlag("verbose", command.Flags().Lookup("verbose"))
 }

@@ -47,7 +47,7 @@ var _ = Describe("Cli", func() {
 			})
 
 			It("exits with failure if no input is given through a pipe", func() {
-				output, err := backupCmd.Output()
+				output, err := backupCmd.CombinedOutput()
 				Expect(output).To(MatchRegexp("not using pipeline"))
 				Expect(err).To(HaveOccurred())
 			})
@@ -80,6 +80,18 @@ var _ = Describe("Cli", func() {
 				resp, err := bucket.List(backupName, "", "", 100)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(len(resp.Contents)).To(Equal(2))
+			})
+
+			Context("on verbose mode", func() {
+				It("outputs the steps", func() {
+					backupCmd := exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "3", "--verbose")
+					output, err := runPipedCmdsAndReturnLastOutput(inputCmd, backupCmd)
+					Expect(err).ToNot(HaveOccurred())
+
+					Expect(output).To(MatchRegexp("Started backup of my-backup"))
+					Expect(output).To(MatchRegexp(" -- File version: \\d{19}\\]"))
+					Expect(output).To(MatchRegexp(" -- Looking for old versions to delete. keeping 3"))
+				})
 			})
 		})
 
@@ -141,6 +153,7 @@ func runPipedCmdsAndReturnLastOutput(firstCmd, lastCmd *exec.Cmd) (string, error
 
 	lastCmd.Stdin, _ = firstCmd.StdoutPipe()
 	lastCmd.Stdout = &outputBuffer
+	lastCmd.Stderr = &outputBuffer
 
 	firstCmd.Start()
 	lastCmd.Start()

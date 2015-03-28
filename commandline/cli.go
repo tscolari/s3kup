@@ -2,13 +2,13 @@ package commandline
 
 import (
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/tscolari/s3up/backup"
+	"github.com/tscolari/s3up/log"
 	"github.com/tscolari/s3up/s3"
 )
 
@@ -25,10 +25,10 @@ func mainCommand() *cobra.Command {
 		Short: "simple single file s3 backup tool",
 		Long:  `An easy way to backup any file/command output to a s3 bucket.`,
 		Run: func(cmd *cobra.Command, args []string) {
+			initLogger()
 			accessKey, secretKey, bucketName, fileName, endpointURL, versionsToKeep, err := fetchAndValidateParams()
 			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
+				log.Fatal(err)
 			}
 
 			s3Client := s3.New(accessKey, secretKey, bucketName, endpointURL)
@@ -36,14 +36,12 @@ func mainCommand() *cobra.Command {
 
 			content, err := getInputContent()
 			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
+				log.Fatal(err)
 			}
 
 			err = backuper.Backup(fileName, content)
 			if err != nil {
-				fmt.Println(err)
-				panic(err)
+				log.Fatal(err)
 			}
 		},
 	}
@@ -96,4 +94,10 @@ func fetchAndValidateParams() (accessKey, secretKey, bucketName, fileName, endpo
 	endpointURL = viper.GetString("endpoint-url")
 
 	return accessKey, secretKey, bucketName, fileName, endpointURL, versionsToKeep, err
+}
+
+func initLogger() {
+	if viper.GetBool("verbose") {
+		log.SetLevel(log.INFO_LEVEL)
+	}
 }
