@@ -48,7 +48,7 @@ func mainCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP("endpoint-url", "e", "s3.amazonaws.com", "the s3 region endpoint url (see http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region)")
+	cmd.Flags().StringP("endpoint-url", "e", "https://s3.amazonaws.com", "the s3 region endpoint url (see http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region)")
 	cmd.Flags().StringP("access-key", "i", "", "AWS Access Key")
 	cmd.Flags().StringP("secret-key", "s", "", "AWS Secret Key")
 	cmd.Flags().StringP("bucket-name", "b", "", "Target S3 bucket")

@@ -6,8 +6,7 @@ import (
 )
 
 func initViperFlags(command *cobra.Command) {
-	viper.SetDefault("endpoint-url", "s3.amazonaws.com")
-	viper.SetDefault("ssl", true)
+	viper.SetDefault("endpoint-url", "https://s3.amazonaws.com")
 
 	viper.BindPFlag("endpoint-url", command.Flags().Lookup("endpoint-url"))
 	viper.BindPFlag("access-key", command.Flags().Lookup("access-key"))
