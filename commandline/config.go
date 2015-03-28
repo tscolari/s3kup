@@ -14,6 +14,5 @@ func initViperFlags(command *cobra.Command) {
 	viper.BindPFlag("secret-key", command.Flags().Lookup("secret-key"))
 	viper.BindPFlag("bucket-name", command.Flags().Lookup("bucket-name"))
 	viper.BindPFlag("file-name", command.Flags().Lookup("file-name"))
-	viper.BindPFlag("no-ssl", command.Flags().Lookup("no-ssl"))
 	viper.BindPFlag("versions-to-keep", command.Flags().Lookup("versions-to-keep"))
 }

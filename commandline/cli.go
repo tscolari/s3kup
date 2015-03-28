@@ -53,7 +53,6 @@ func mainCommand() *cobra.Command {
 	cmd.Flags().StringP("secret-key", "s", "", "AWS Secret Key")
 	cmd.Flags().StringP("bucket-name", "b", "", "Target S3 bucket")
 	cmd.Flags().StringP("file-name", "n", "", "How the file will be called on s3")
-	cmd.Flags().Bool("no-ssl", false, "Use ssl endpoint")
 	cmd.Flags().IntP("versions-to-keep", "k", 5, "Number of versions to keep")
 	cmd.Flags().BoolP("verbose", "v", false, "Verbose mode")
 
@@ -71,16 +70,6 @@ func getInputContent() ([]byte, error) {
 	}
 
 	return nil, errors.New("not using pipeline")
-}
-
-func getEndpointURL() string {
-	endpointURL := viper.GetString("endpoint-url")
-	ssl := !viper.GetBool("no-ssl")
-
-	if ssl {
-		return fmt.Sprintf("https://%s", endpointURL)
-	}
-	return fmt.Sprintf("http://%s", endpointURL)
 }
 
 func fetchAndValidateParams() (accessKey, secretKey, bucketName, fileName, endpointURL string, versionsToKeep int, err error) {
@@ -104,7 +93,7 @@ func fetchAndValidateParams() (accessKey, secretKey, bucketName, fileName, endpo
 		err = errors.New("missing bucket name argument")
 	}
 
-	endpointURL = getEndpointURL()
+	endpointURL = viper.GetString("endpoint-url")
 
 	return accessKey, secretKey, bucketName, fileName, endpointURL, versionsToKeep, err
 }

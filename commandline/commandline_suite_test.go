@@ -26,7 +26,7 @@ var _ = BeforeSuite(func() {
 	}
 
 	cli = buildCli()
-	s3EndpointURL = s3Server.URL()[7:]
+	s3EndpointURL = s3Server.URL()
 })
 
 var _ = AfterSuite(func() {

@@ -35,7 +35,7 @@ var _ = Describe("Cli", func() {
 
 	Describe("storing backups", func() {
 		BeforeEach(func() {
-			backupCmd = exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "--no-ssl", "-k", "3")
+			backupCmd = exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "3")
 		})
 
 		Context("when the correct args are given", func() {
@@ -63,17 +63,17 @@ var _ = Describe("Cli", func() {
 
 			It("keeps only the number of versions specified", func() {
 				firstRunInputCmd := exec.Command("echo", "'store my data'")
-				firstRunCmd := exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "--no-ssl", "-k", "2")
+				firstRunCmd := exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "2")
 				_, err := runPipedCmdsAndReturnLastOutput(firstRunInputCmd, firstRunCmd)
 				Expect(err).ToNot(HaveOccurred())
 
 				secondRunInputCmd := exec.Command("echo", "'store my data'")
-				secondRunCmd := exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "--no-ssl", "-k", "2")
+				secondRunCmd := exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "2")
 				_, err = runPipedCmdsAndReturnLastOutput(secondRunInputCmd, secondRunCmd)
 				Expect(err).ToNot(HaveOccurred())
 
 				thirdRunInputCmd := exec.Command("echo", "'store my data'")
-				thirdRunCmd := exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "--no-ssl", "-k", "2")
+				thirdRunCmd := exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "2")
 				_, err = runPipedCmdsAndReturnLastOutput(thirdRunInputCmd, thirdRunCmd)
 				Expect(err).ToNot(HaveOccurred())
 
@@ -85,7 +85,7 @@ var _ = Describe("Cli", func() {
 
 		Context("when there is invalid or missing args", func() {
 			It("fails if no file name is given", func() {
-				backupCmd = exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "--no-ssl", "-k", "3")
+				backupCmd = exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-k", "3")
 				output, err := runPipedCmdsAndReturnLastOutput(inputCmd, backupCmd)
 				Expect(err).To(HaveOccurred())
 
@@ -93,7 +93,7 @@ var _ = Describe("Cli", func() {
 			})
 
 			It("fails if no bucket name is given", func() {
-				backupCmd = exec.Command(cli, "-i", accessKey, "-s", secretKey, "-e", s3EndpointURL, "-n", backupName, "--no-ssl", "-k", "3")
+				backupCmd = exec.Command(cli, "-i", accessKey, "-s", secretKey, "-e", s3EndpointURL, "-n", backupName, "-k", "3")
 				output, err := runPipedCmdsAndReturnLastOutput(inputCmd, backupCmd)
 				Expect(err).To(HaveOccurred())
 
@@ -101,7 +101,7 @@ var _ = Describe("Cli", func() {
 			})
 
 			It("fails if no access key is given", func() {
-				backupCmd = exec.Command(cli, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "--no-ssl", "-k", "3")
+				backupCmd = exec.Command(cli, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "3")
 				output, err := runPipedCmdsAndReturnLastOutput(inputCmd, backupCmd)
 				Expect(err).To(HaveOccurred())
 
@@ -109,7 +109,7 @@ var _ = Describe("Cli", func() {
 			})
 
 			It("fails if no secret key is given", func() {
-				backupCmd = exec.Command(cli, "-i", accessKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "--no-ssl", "-k", "3")
+				backupCmd = exec.Command(cli, "-i", accessKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "3")
 				output, err := runPipedCmdsAndReturnLastOutput(inputCmd, backupCmd)
 				Expect(err).To(HaveOccurred())
 
@@ -117,7 +117,7 @@ var _ = Describe("Cli", func() {
 			})
 
 			It("fails if versions to keep is equal to zero", func() {
-				backupCmd = exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "--no-ssl", "-k", "0")
+				backupCmd = exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "0")
 				output, err := runPipedCmdsAndReturnLastOutput(inputCmd, backupCmd)
 				Expect(err).To(HaveOccurred())
 
@@ -125,7 +125,7 @@ var _ = Describe("Cli", func() {
 			})
 
 			It("fails if versions to keep is less than zero", func() {
-				backupCmd = exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "--no-ssl", "-k", "-3")
+				backupCmd = exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "-3")
 				output, err := runPipedCmdsAndReturnLastOutput(inputCmd, backupCmd)
 				Expect(err).To(HaveOccurred())
 
