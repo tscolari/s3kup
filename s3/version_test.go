@@ -23,7 +23,7 @@ var _ = Describe("Version", func() {
 
 			Expect(version.Path).To(Equal("b/a1e53e1d-9b01-cbb99505ac78/0"))
 			Expect(version.BackupName).To(Equal("b/a1e53e1d-9b01-cbb99505ac78"))
-			Expect(version.Version).To(Equal("0"))
+			Expect(version.Version).To(Equal(int64(0)))
 			Expect(version.LastModified).To(Equal("2015-03-29T11:54:42.819+01:00"))
 			Expect(version.Size).To(Equal(int64(4)))
 		})

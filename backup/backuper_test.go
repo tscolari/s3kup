@@ -113,10 +113,10 @@ var _ = Describe("Backuper", func() {
 
 					s3Client.ListCall = func(path string) (s3.Versions, error) {
 						versions := s3.Versions{
-							s3.Version{BackupName: "myfile", Version: "20010101"},
-							s3.Version{BackupName: "myfile", Version: "20000101"},
-							s3.Version{BackupName: "myfile", Version: "20020101"},
-							s3.Version{BackupName: "myfile", Version: "20150101"},
+							s3.Version{BackupName: "myfile", Version: 20010101},
+							s3.Version{BackupName: "myfile", Version: 20000101},
+							s3.Version{BackupName: "myfile", Version: 20020101},
+							s3.Version{BackupName: "myfile", Version: 20150101},
 						}
 						return versions, nil
 					}
@@ -168,10 +168,10 @@ var _ = Describe("Backuper", func() {
 
 					s3Client.ListCall = func(path string) (s3.Versions, error) {
 						versions := s3.Versions{
-							s3.Version{BackupName: "myfile", Version: "20010101", Path: "myfile/20010101"},
-							s3.Version{BackupName: "myfile", Version: "20000101", Path: "myfile/20000101"},
-							s3.Version{BackupName: "myfile", Version: "20020101", Path: "myfile/20020101"},
-							s3.Version{BackupName: "myfile", Version: "20150101", Path: "myfile/20150101"},
+							s3.Version{BackupName: "myfile", Version: 20010101, Path: "myfile/20010101"},
+							s3.Version{BackupName: "myfile", Version: 20000101, Path: "myfile/20000101"},
+							s3.Version{BackupName: "myfile", Version: 20020101, Path: "myfile/20020101"},
+							s3.Version{BackupName: "myfile", Version: 20150101, Path: "myfile/20150101"},
 						}
 						return versions, nil
 					}
@@ -195,13 +195,13 @@ var _ = Describe("Backuper", func() {
 
 					s3Client.ListCall = func(path string) (s3.Versions, error) {
 						versions := s3.Versions{
-							s3.Version{BackupName: "myfile", Version: "20010101", Path: "myfile/20010101"},
-							s3.Version{BackupName: "myfile", Version: "20030101", Path: "myfile/20030101"},
-							s3.Version{BackupName: "myfile", Version: "20000101", Path: "myfile/20000101"},
-							s3.Version{BackupName: "myfile", Version: "20020101", Path: "myfile/20020101"},
-							s3.Version{BackupName: "myfile", Version: "19990101", Path: "myfile/19990101"},
-							s3.Version{BackupName: "myfile", Version: "20150101", Path: "myfile/20150101"},
-							s3.Version{BackupName: "myfile", Version: "19950101", Path: "myfile/19950101"},
+							s3.Version{BackupName: "myfile", Version: 20010101, Path: "myfile/20010101"},
+							s3.Version{BackupName: "myfile", Version: 20030101, Path: "myfile/20030101"},
+							s3.Version{BackupName: "myfile", Version: 20000101, Path: "myfile/20000101"},
+							s3.Version{BackupName: "myfile", Version: 20020101, Path: "myfile/20020101"},
+							s3.Version{BackupName: "myfile", Version: 19990101, Path: "myfile/19990101"},
+							s3.Version{BackupName: "myfile", Version: 20150101, Path: "myfile/20150101"},
+							s3.Version{BackupName: "myfile", Version: 19950101, Path: "myfile/19950101"},
 						}
 						return versions, nil
 					}

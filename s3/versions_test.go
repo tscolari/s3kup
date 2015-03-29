@@ -11,10 +11,10 @@ import (
 
 var _ = Describe("Versions", func() {
 	It("responds to the sort interface, sorting by version number", func() {
-		version1 := Version{Version: "1"}
-		version10 := Version{Version: "10"}
-		version50 := Version{Version: "50"}
-		version100 := Version{Version: "100"}
+		version1 := Version{Version: 1}
+		version10 := Version{Version: 10}
+		version50 := Version{Version: 50}
+		version100 := Version{Version: 100}
 
 		versions := Versions{
 			version50,
