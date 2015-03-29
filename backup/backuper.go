@@ -6,20 +6,15 @@ import (
 	"time"
 
 	"github.com/tscolari/s3up/log"
+	"github.com/tscolari/s3up/s3"
 )
 
-type S3Client interface {
-	Store(path string, content []byte) error
-	List(path string) (files []string, err error)
-	Delete(path string) error
-}
-
 type Backuper struct {
-	s3Client       S3Client
+	s3Client       s3.S3Client
 	versionsToKeep int
 }
 
-func New(s3Client S3Client, versionsToKeep int) Backuper {
+func New(s3Client s3.S3Client, versionsToKeep int) Backuper {
 	return Backuper{
 		s3Client:       s3Client,
 		versionsToKeep: versionsToKeep,
@@ -50,13 +45,13 @@ func (b Backuper) cleanUpOldVersions(fileName string) error {
 		return err
 	}
 
-	sort.Strings(storedVersions)
+	sort.Sort(storedVersions)
 	if len(storedVersions) >= b.versionsToKeep {
 		extraVersions := len(storedVersions) - b.versionsToKeep
 		log.Info(" --", extraVersions, "old versions will be deleted")
 		for _, version := range storedVersions[:extraVersions] {
-			err = b.s3Client.Delete(version)
-			log.Info(" -- deleted:", version)
+			err = b.s3Client.Delete(version.Path)
+			log.Info(" -- deleted:", version.Version)
 			if err != nil {
 				return err
 			}

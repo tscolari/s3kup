@@ -5,6 +5,12 @@ import (
 	goamzs3 "github.com/mitchellh/goamz/s3"
 )
 
+type S3Client interface {
+	Store(path string, content []byte) error
+	List(path string) (versions Versions, err error)
+	Delete(path string) error
+}
+
 type Client struct {
 	s3     *goamzs3.S3
 	bucket *goamzs3.Bucket
@@ -49,15 +55,15 @@ func (c *Client) Delete(path string) error {
 	return c.bucket.Del(path)
 }
 
-func (c *Client) List(path string) ([]string, error) {
+func (c *Client) List(path string) (Versions, error) {
 	resp, err := c.bucket.List(path+"/", "", "", 100)
 	if err != nil {
-		return []string{}, err
+		return []Version{}, err
 	}
 
-	files := []string{}
+	files := []Version{}
 	for _, file := range resp.Contents {
-		files = append(files, file.Key)
+		files = append(files, NewVersion(file))
 	}
 
 	return files, nil

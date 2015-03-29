@@ -2,6 +2,7 @@ package s3_test
 
 import (
 	"fmt"
+	"strconv"
 
 	"code.google.com/p/go-uuid/uuid"
 
@@ -67,8 +68,8 @@ var _ = Describe("Client", func() {
 			Expect(len(files)).To(Equal(5))
 
 			for i := 0; i < 5; i++ {
-				path := fmt.Sprintf("%s/%d", filePath, i)
-				Expect(files[i]).To(Equal(path))
+				Expect(files[i].Version).To(Equal(strconv.Itoa(i)))
+				Expect(files[i].BackupName).To(Equal(filePath))
 			}
 		})
 	})
