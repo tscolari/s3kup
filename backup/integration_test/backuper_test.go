@@ -19,7 +19,6 @@ var _ = Describe("Backuper", func() {
 		accessKey      string = "my_id"
 		secretKey      string = "my_secret"
 		regionName     string = "my_region"
-		bucketName     string = "my_bucket"
 		versionsToKeep int    = 3
 	)
 
@@ -29,6 +28,7 @@ var _ = Describe("Backuper", func() {
 	var s3Bucket *goamzs3.Bucket
 
 	BeforeEach(func() {
+		bucketName := uuid.New()
 		client := s3.New(accessKey, secretKey, bucketName, s3EndpointURL)
 		backuper = backup.New(client, versionsToKeep)
 
