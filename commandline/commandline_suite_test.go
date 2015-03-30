@@ -1,10 +1,15 @@
 package commandline_test
 
 import (
+	"bytes"
+	"os/exec"
+
+	"github.com/mitchellh/goamz/s3"
 	"github.com/mitchellh/goamz/s3/s3test"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
+	"github.com/tscolari/s3up/s3/testhelpers"
 
 	"testing"
 )
@@ -14,6 +19,7 @@ func TestCommandline(t *testing.T) {
 	RunSpecs(t, "Commandline > Integration Suite")
 }
 
+var s3Client *s3.S3
 var s3Server *s3test.Server
 var s3EndpointURL string
 var cli string
@@ -37,4 +43,24 @@ func buildCli() string {
 	cliPath, err := gexec.Build("github.com/tscolari/s3up")
 	Expect(err).ToNot(HaveOccurred())
 	return cliPath
+}
+
+func runPipedCmdsAndReturnLastOutput(firstCmd, lastCmd *exec.Cmd) (string, error) {
+	var outputBuffer bytes.Buffer
+	var err error
+
+	lastCmd.Stdin, _ = firstCmd.StdoutPipe()
+	lastCmd.Stdout = &outputBuffer
+	lastCmd.Stderr = &outputBuffer
+
+	firstCmd.Start()
+	lastCmd.Start()
+	err = lastCmd.Wait()
+
+	return outputBuffer.String(), err
+}
+
+func s3Bucket(accessKey, secretKey, bucketName string) *s3.Bucket {
+	s3Client = testhelpers.BuildGoamzS3(accessKey, secretKey, s3Server.URL())
+	return s3Client.Bucket(bucketName)
 }
