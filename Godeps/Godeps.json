@@ -66,6 +66,10 @@
 			"Rev": "0251f51e656d4db8980bdd6b15596abb27fdfe87"
 		},
 		{
+			"ImportPath": "github.com/pivotal-golang/bytefmt",
+			"Rev": "eb6a478daea5cd564c230719240761a1a2ccc713"
+		},
+		{
 			"ImportPath": "github.com/spf13/cast",
 			"Rev": "2c4fdb5416dd394ff5e61fcdb8eb4f09e46a2ed8"
 		},

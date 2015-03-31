@@ -11,8 +11,10 @@ import (
 func New() *cobra.Command {
 	mainCmd := mainCommand()
 	pushCmd := pushCommand()
+	listCmd := listCommand()
 
 	mainCmd.AddCommand(pushCmd)
+	mainCmd.AddCommand(listCmd)
 
 	setGlobalFlags(mainCmd)
 	initViperFlags(mainCmd, pushCmd)
