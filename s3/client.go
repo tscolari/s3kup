@@ -9,6 +9,7 @@ type S3Client interface {
 	Store(path string, content []byte) error
 	List(path string) (versions Versions, err error)
 	Delete(path string) error
+	Get(path string) ([]byte, error)
 }
 
 type Client struct {
@@ -67,4 +68,8 @@ func (c *Client) List(path string) (Versions, error) {
 	}
 
 	return files, nil
+}
+
+func (c *Client) Get(path string) ([]byte, error) {
+	return c.bucket.Get(path)
 }

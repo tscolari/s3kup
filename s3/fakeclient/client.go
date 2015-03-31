@@ -6,6 +6,7 @@ type Client struct {
 	StoreCall  func(path string, content []byte) error
 	ListCall   func(path string) (s3.Versions, error)
 	DeleteCall func(path string) error
+	GetCall    func(path string) ([]byte, error)
 }
 
 func (c *Client) Store(path string, content []byte) error {
@@ -27,4 +28,11 @@ func (c *Client) Delete(path string) error {
 		return c.DeleteCall(path)
 	}
 	return nil
+}
+
+func (c *Client) Get(path string) ([]byte, error) {
+	if c.GetCall != nil {
+		return c.GetCall(path)
+	}
+	return []byte{}, nil
 }

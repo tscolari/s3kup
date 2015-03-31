@@ -2,6 +2,7 @@ package s3_test
 
 import (
 	"fmt"
+	"math/rand"
 
 	"code.google.com/p/go-uuid/uuid"
 
@@ -70,6 +71,25 @@ var _ = Describe("Client", func() {
 				Expect(files[i].Version).To(Equal(int64(i)))
 				Expect(files[i].BackupName).To(Equal(filePath))
 			}
+		})
+	})
+
+	Describe("#Get", func() {
+		var path string
+		var remoteContent []byte
+
+		BeforeEach(func() {
+			path = fmt.Sprintf("%s/%d", rand.Int())
+			remoteContent = []byte(fmt.Sprintf("content %d", rand.Int()))
+
+			err := bucket.Put(path, remoteContent, "", "")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("returns the correct content", func() {
+			content, err := client.Get(path)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(content).To(Equal(remoteContent))
 		})
 	})
 
