@@ -13,7 +13,7 @@ type Version struct {
 	BackupName   string
 	Version      int64
 	LastModified string
-	Size         int64
+	Size         uint64
 }
 
 func NewVersion(key goamzs3.Key) Version {
@@ -32,6 +32,6 @@ func NewVersion(key goamzs3.Key) Version {
 		BackupName:   backupName[1],
 		Version:      versionInt,
 		LastModified: key.LastModified,
-		Size:         key.Size,
+		Size:         uint64(key.Size),
 	}
 }
