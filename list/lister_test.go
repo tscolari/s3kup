@@ -6,36 +6,18 @@ import (
 
 	"github.com/tscolari/s3up/list"
 	"github.com/tscolari/s3up/s3"
+	"github.com/tscolari/s3up/s3/fakeclient"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-type fakeS3Client struct {
-	ListCall func(path string) (s3.Versions, error)
-}
-
-func (c *fakeS3Client) Store(path string, content []byte) error {
-	return nil
-}
-
-func (c *fakeS3Client) List(path string) (files s3.Versions, err error) {
-	if c.ListCall != nil {
-		return c.ListCall(path)
-	}
-	return nil, nil
-}
-
-func (c *fakeS3Client) Delete(path string) error {
-	return nil
-}
-
 var _ = Describe("Lister", func() {
 	var lister list.Lister
-	var s3Client *fakeS3Client
+	var s3Client *fakeclient.Client
 
 	BeforeEach(func() {
-		s3Client = &fakeS3Client{}
+		s3Client = &fakeclient.Client{}
 		lister = list.New(s3Client)
 	})
 

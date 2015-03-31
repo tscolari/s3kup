@@ -6,44 +6,18 @@ import (
 
 	"github.com/tscolari/s3up/backup"
 	"github.com/tscolari/s3up/s3"
+	"github.com/tscolari/s3up/s3/fakeclient"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-type fakeS3Client struct {
-	StoreCall  func(path string, content []byte) error
-	ListCall   func(path string) (s3.Versions, error)
-	DeleteCall func(path string) error
-}
-
-func (c *fakeS3Client) Store(path string, content []byte) error {
-	if c.StoreCall != nil {
-		return c.StoreCall(path, content)
-	}
-	return nil
-}
-
-func (c *fakeS3Client) List(path string) (files s3.Versions, err error) {
-	if c.ListCall != nil {
-		return c.ListCall(path)
-	}
-	return nil, nil
-}
-
-func (c *fakeS3Client) Delete(path string) error {
-	if c.DeleteCall != nil {
-		return c.DeleteCall(path)
-	}
-	return nil
-}
-
 var _ = Describe("Backuper", func() {
 	var backuper backup.Backuper
-	var s3Client *fakeS3Client
+	var s3Client *fakeclient.Client
 
 	BeforeEach(func() {
-		s3Client = &fakeS3Client{}
+		s3Client = &fakeclient.Client{}
 		backuper = backup.New(s3Client, 3)
 	})
 
