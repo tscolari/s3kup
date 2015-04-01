@@ -55,14 +55,14 @@ var _ = Describe("Client", func() {
 
 	Describe("#List", func() {
 		BeforeEach(func() {
-			for i := 0; i < 5; i++ {
+			for i := 4; i >= 0; i-- {
 				path := fmt.Sprintf("%s/%d", filePath, i)
 				err := bucket.Put(path, []byte("test"), "", "")
 				Expect(err).ToNot(HaveOccurred())
 			}
 		})
 
-		It("lists all files in the s3 bucket path", func() {
+		It("lists all files, sorted, in the s3 bucket path", func() {
 			files, err := client.List(filePath)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(len(files)).To(Equal(5))
