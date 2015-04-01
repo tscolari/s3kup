@@ -2,6 +2,7 @@ package commandline
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/spf13/cobra"
 	"github.com/tscolari/s3up/fetch"
@@ -24,7 +25,23 @@ func pullCommand() *cobra.Command {
 			s3Client := s3.New(accessKey, secretKey, bucketName, endpointURL)
 			fetcher := fetch.New(s3Client)
 
-			content, err := fetcher.FetchLatest(fileName)
+			if len(args) > 1 {
+				log.Fatal("You can specify only one version to get")
+			}
+
+			var content []byte
+			if len(args) == 1 {
+				var version int64
+				version, err = strconv.ParseInt(args[0], 10, 64)
+				if err != nil {
+					log.Fatal("Invalid version format. It can only contain numbers")
+				}
+
+				content, err = fetcher.FetchVersion(fileName, version)
+			} else {
+				content, err = fetcher.FetchLatest(fileName)
+			}
+
 			if err != nil {
 				log.Fatal(err)
 			}

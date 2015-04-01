@@ -21,9 +21,10 @@ var _ = Describe("Cli > pull", func() {
 
 	var pullCmd *exec.Cmd
 	var bucket *s3.Bucket
+	var bucketName string
 
 	BeforeEach(func() {
-		bucketName := fmt.Sprintf("bucket%d", rand.Int())
+		bucketName = fmt.Sprintf("bucket%d", rand.Int())
 		pullCmd = exec.Command(cli, "pull", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
 		bucket = s3Bucket(accessKey, secretKey, bucketName)
 		bucket.PutBucket("")
@@ -42,7 +43,7 @@ var _ = Describe("Cli > pull", func() {
 			It("fetches and prints out the latest backup", func() {
 				output, err := pullCmd.CombinedOutput()
 				Expect(err).ToNot(HaveOccurred())
-				Expect(string(output)).To(Equal("content 4"))
+				Expect(output).To(Equal([]byte("content 4")))
 			})
 		})
 
@@ -52,6 +53,33 @@ var _ = Describe("Cli > pull", func() {
 				Expect(err).To(HaveOccurred())
 
 				Expect(string(output)).To(MatchRegexp("There's no backup named 'my/backup' on this bucket"))
+			})
+		})
+	})
+
+	Context("when a version is specified", func() {
+		BeforeEach(func() {
+			bucket.Put("my/backup/10000002", []byte("content 2"), "", "")
+			bucket.Put("my/backup/10000001", []byte("content 1"), "", "")
+			bucket.Put("my/backup/10000004", []byte("content 4"), "", "")
+			bucket.Put("my/backup/10000003", []byte("content 3"), "", "")
+		})
+
+		It("fetches that version's content", func() {
+			pullCmd = exec.Command(cli, "pull", "10000003", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
+			output, err := pullCmd.CombinedOutput()
+			Expect(err).ToNot(HaveOccurred())
+
+			Expect(output).To(Equal([]byte("content 3")))
+		})
+
+		Context("when the version doesn't exist", func() {
+			It("prints an error", func() {
+				pullCmd = exec.Command(cli, "pull", "19999993", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
+				output, err := pullCmd.CombinedOutput()
+				Expect(err).To(HaveOccurred())
+
+				Expect(string(output)).To(MatchRegexp("Could not find version '19999993'"))
 			})
 		})
 	})
