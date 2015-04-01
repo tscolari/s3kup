@@ -17,7 +17,7 @@ func New(client s3.S3Client) Fetcher {
 	}
 }
 
-func (f Fetcher) Fetch(backupName string) ([]byte, error) {
+func (f Fetcher) FetchLatest(backupName string) ([]byte, error) {
 	versions, err := f.s3.List(backupName)
 	if err != nil {
 		return nil, err
@@ -30,4 +30,16 @@ func (f Fetcher) Fetch(backupName string) ([]byte, error) {
 
 	lastVersion := versions[len(versions)-1]
 	return f.s3.Get(lastVersion.Path)
+}
+
+func (f Fetcher) FetchVersion(backupName string, version int64) ([]byte, error) {
+	versionPath := fmt.Sprintf("%s/%d", backupName, version)
+
+	content, err := f.s3.Get(versionPath)
+	if err != nil && err.Error() == "The specified key does not exist." {
+		message := fmt.Sprintf("Could not find version '%d'", version)
+		err = errors.New(message)
+	}
+
+	return content, err
 }

@@ -22,8 +22,10 @@ var _ = Describe("Fetcher", func() {
 	var fetcher fetch.Fetcher
 	var s3Client *goamzs3.S3
 	var s3Bucket *goamzs3.Bucket
+	var backupName string
 
 	BeforeEach(func() {
+		backupName = "my/backup"
 		bucketName := uuid.New()
 		client := s3.New(accessKey, secretKey, bucketName, s3EndpointURL)
 		fetcher = fetch.New(client)
@@ -32,32 +34,45 @@ var _ = Describe("Fetcher", func() {
 		s3Bucket = s3Client.Bucket(bucketName)
 		s3Bucket.PutBucket("")
 
+		s3Bucket.Put(backupName+"/1001", []byte("first backup"), "", "")
+		s3Bucket.Put(backupName+"/1003", []byte("third backup"), "", "")
+		s3Bucket.Put(backupName+"/1002", []byte("second backup"), "", "")
+
 		filePath = uuid.New()
 	})
 
-	Context("when the bucket is empty", func() {
-		It("returns an error", func() {
-			_, err := fetcher.Fetch("do/not/exist")
-			Expect(err).To(MatchError("There's no backup named 'do/not/exist' on this bucket"))
+	Describe("#FetchLatest", func() {
+
+		Context("when the bucket is empty", func() {
+			It("returns an error", func() {
+				_, err := fetcher.FetchLatest("do/not/exist")
+				Expect(err).To(MatchError("There's no backup named 'do/not/exist' on this bucket"))
+			})
+		})
+
+		Context("when there are versions stored", func() {
+			It("returns the content of the latest version", func() {
+				content, err := fetcher.FetchLatest(backupName)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(content).To(Equal([]byte("third backup")))
+			})
 		})
 	})
 
-	Context("when there are versions stored", func() {
-		var backupName string
-
-		BeforeEach(func() {
-			backupName = "my/backup"
-
-			s3Bucket.Put(backupName+"/1001", []byte("first backup"), "", "")
-			s3Bucket.Put(backupName+"/1003", []byte("third backup"), "", "")
-			s3Bucket.Put(backupName+"/1002", []byte("second backup"), "", "")
+	Describe("#FetchVersion", func() {
+		Context("when the version doesn't exist", func() {
+			It("returns an error", func() {
+				_, err := fetcher.FetchVersion(backupName, 999)
+				Expect(err).To(MatchError("Could not find version '999'"))
+			})
 		})
 
-		It("returns the content of the latest version", func() {
-			content, err := fetcher.Fetch(backupName)
+		It("returns the content of the given version", func() {
+			content, err := fetcher.FetchVersion(backupName, 1001)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(content).To(Equal([]byte("third backup")))
-		})
-	})
 
+			Expect(content).To(Equal([]byte("first backup")))
+		})
+
+	})
 })
