@@ -1,7 +1,8 @@
 package commandline
 
 import (
-	"fmt"
+	"encoding/binary"
+	"os"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -46,7 +47,7 @@ func pullCommand() *cobra.Command {
 				log.Fatal(err)
 			}
 
-			fmt.Printf(string(content))
+			binary.Write(os.Stdout, binary.LittleEndian, content)
 		},
 	}
 	return cmd
