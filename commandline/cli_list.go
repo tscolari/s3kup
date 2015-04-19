@@ -2,6 +2,7 @@ package commandline
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/pivotal-golang/bytefmt"
 
@@ -37,7 +38,7 @@ func listCommand() *cobra.Command {
 
 			for _, version := range versions {
 				size := bytefmt.ByteSize(version.Size)
-				fmt.Printf("* %d [%s at %s]\n", version.Version, size, version.LastModified)
+				fmt.Printf("* %d\t%10s\t%s\n", version.Version, size, version.LastModified.Format(time.ANSIC))
 			}
 		},
 	}
