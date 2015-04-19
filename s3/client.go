@@ -57,7 +57,11 @@ func (c *Client) List(path string) (Versions, error) {
 
 	files := []Version{}
 	for _, file := range resp.Contents {
-		files = append(files, NewVersion(file))
+		version, err := NewVersion(file)
+		if err != nil {
+			return Versions{}, err
+		}
+		files = append(files, version)
 	}
 
 	return files, nil

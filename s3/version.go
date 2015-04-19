@@ -1,7 +1,7 @@
 package s3
 
 import (
-	"log"
+	"errors"
 	"regexp"
 	"strconv"
 	"time"
@@ -17,20 +17,24 @@ type Version struct {
 	Size         uint64
 }
 
-func NewVersion(key goamzs3.Key) Version {
+func NewVersion(key goamzs3.Key) (Version, error) {
 	backupNameRegexp, _ := regexp.Compile("^(.*)/\\d+$")
 	backupName := backupNameRegexp.FindStringSubmatch(key.Key)
 
 	versionRegexp, _ := regexp.Compile("^.*/(\\d+)$")
 	versionStr := versionRegexp.FindStringSubmatch(key.Key)
+	if len(versionStr) < 2 {
+		return Version{}, errors.New("Remote version '" + key.Key + "' can't be parsed")
+	}
+
 	versionInt, err := strconv.ParseInt(versionStr[1], 10, 64)
 	if err != nil {
-		log.Fatal("Remote version '", versionStr, "' can't be parsed.")
+		return Version{}, errors.New("Remote version '" + versionStr[1] + "' can't be parsed")
 	}
 
 	lastModified, err := time.Parse(time.RFC3339, key.LastModified)
 	if err != nil {
-		log.Fatal("Remote version '", versionStr, "' can't be parsed.")
+		return Version{}, errors.New("Failed to parse the version timestamp. '" + key.LastModified + "' was not recognized")
 	}
 
 	return Version{
@@ -39,5 +43,5 @@ func NewVersion(key goamzs3.Key) Version {
 		Version:      versionInt,
 		LastModified: lastModified,
 		Size:         uint64(key.Size),
-	}
+	}, nil
 }
