@@ -1,6 +1,8 @@
 package s3_test
 
 import (
+	"time"
+
 	"github.com/tscolari/s3up/s3"
 
 	goamzs3 "github.com/mitchellh/goamz/s3"
@@ -24,7 +26,9 @@ var _ = Describe("Version", func() {
 			Expect(version.Path).To(Equal("b/a1e53e1d-9b01-cbb99505ac78/0"))
 			Expect(version.BackupName).To(Equal("b/a1e53e1d-9b01-cbb99505ac78"))
 			Expect(version.Version).To(Equal(int64(0)))
-			Expect(version.LastModified).To(Equal("2015-03-29T11:54:42.819+01:00"))
+			parsedTime, err := time.Parse(time.RFC3339, "2015-03-29T11:54:42.819+01:00")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(version.LastModified).To(Equal(parsedTime))
 			Expect(version.Size).To(Equal(uint64(4)))
 		})
 	})

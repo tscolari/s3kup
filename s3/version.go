@@ -4,6 +4,7 @@ import (
 	"log"
 	"regexp"
 	"strconv"
+	"time"
 
 	goamzs3 "github.com/mitchellh/goamz/s3"
 )
@@ -12,7 +13,7 @@ type Version struct {
 	Path         string
 	BackupName   string
 	Version      int64
-	LastModified string
+	LastModified time.Time
 	Size         uint64
 }
 
@@ -27,11 +28,16 @@ func NewVersion(key goamzs3.Key) Version {
 		log.Fatal("Remote version '", versionStr, "' can't be parsed.")
 	}
 
+	lastModified, err := time.Parse(time.RFC3339, key.LastModified)
+	if err != nil {
+		log.Fatal("Remote version '", versionStr, "' can't be parsed.")
+	}
+
 	return Version{
 		Path:         key.Key,
 		BackupName:   backupName[1],
 		Version:      versionInt,
-		LastModified: key.LastModified,
+		LastModified: lastModified,
 		Size:         uint64(key.Size),
 	}
 }
