@@ -3,6 +3,7 @@ package backup_test
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/tscolari/s3up/backup"
 	"github.com/tscolari/s3up/s3"
@@ -141,11 +142,12 @@ var _ = Describe("Backuper", func() {
 					var deletedVersion string
 
 					s3Client.ListCall = func(path string) (s3.Versions, error) {
+						baseTime := time.Now()
 						versions := s3.Versions{
-							s3.Version{BackupName: "myfile", Version: 20010101, Path: "myfile/20010101"},
-							s3.Version{BackupName: "myfile", Version: 20000101, Path: "myfile/20000101"},
-							s3.Version{BackupName: "myfile", Version: 20020101, Path: "myfile/20020101"},
-							s3.Version{BackupName: "myfile", Version: 20150101, Path: "myfile/20150101"},
+							s3.Version{BackupName: "myfile", Version: 20010101, Path: "myfile/20010101", LastModified: baseTime.Add(2 * time.Minute)},
+							s3.Version{BackupName: "myfile", Version: 20000101, Path: "myfile/20000101", LastModified: baseTime.Add(1 * time.Minute)},
+							s3.Version{BackupName: "myfile", Version: 20020101, Path: "myfile/20020101", LastModified: baseTime.Add(3 * time.Minute)},
+							s3.Version{BackupName: "myfile", Version: 20150101, Path: "myfile/20150101", LastModified: baseTime.Add(4 * time.Minute)},
 						}
 						return versions, nil
 					}
@@ -166,16 +168,17 @@ var _ = Describe("Backuper", func() {
 			Context("when there is more versions than `versionsToKeep`", func() {
 				It("deletes as many old versions as necessary to keep it the same as `versionsToKeep`", func() {
 					deletedVersions := []string{}
+					baseTime := time.Now()
 
 					s3Client.ListCall = func(path string) (s3.Versions, error) {
 						versions := s3.Versions{
-							s3.Version{BackupName: "myfile", Version: 20010101, Path: "myfile/20010101"},
-							s3.Version{BackupName: "myfile", Version: 20030101, Path: "myfile/20030101"},
-							s3.Version{BackupName: "myfile", Version: 20000101, Path: "myfile/20000101"},
-							s3.Version{BackupName: "myfile", Version: 20020101, Path: "myfile/20020101"},
-							s3.Version{BackupName: "myfile", Version: 19990101, Path: "myfile/19990101"},
-							s3.Version{BackupName: "myfile", Version: 20150101, Path: "myfile/20150101"},
-							s3.Version{BackupName: "myfile", Version: 19950101, Path: "myfile/19950101"},
+							s3.Version{BackupName: "myfile", Version: 20010101, Path: "myfile/20010101", LastModified: baseTime.Add(4 * time.Minute)},
+							s3.Version{BackupName: "myfile", Version: 20030101, Path: "myfile/20030101", LastModified: baseTime.Add(6 * time.Minute)},
+							s3.Version{BackupName: "myfile", Version: 20000101, Path: "myfile/20000101", LastModified: baseTime.Add(3 * time.Minute)},
+							s3.Version{BackupName: "myfile", Version: 20020101, Path: "myfile/20020101", LastModified: baseTime.Add(5 * time.Minute)},
+							s3.Version{BackupName: "myfile", Version: 19990101, Path: "myfile/19990101", LastModified: baseTime.Add(2 * time.Minute)},
+							s3.Version{BackupName: "myfile", Version: 20150101, Path: "myfile/20150101", LastModified: baseTime.Add(7 * time.Minute)},
+							s3.Version{BackupName: "myfile", Version: 19950101, Path: "myfile/19950101", LastModified: baseTime.Add(1 * time.Minute)},
 						}
 						return versions, nil
 					}

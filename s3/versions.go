@@ -3,7 +3,7 @@ package s3
 type Versions []Version
 
 func (v Versions) Less(i, j int) bool {
-	return v[i].Version < v[j].Version
+	return v[i].LastModified.UnixNano() < v[j].LastModified.UnixNano()
 }
 
 func (v Versions) Len() int {
