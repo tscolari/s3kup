@@ -10,11 +10,17 @@ import (
 )
 
 type Backuper struct {
-	s3Client       s3.S3Client
+	s3Client       S3Client
 	versionsToKeep int
 }
 
-func New(s3Client s3.S3Client, versionsToKeep int) Backuper {
+type S3Client interface {
+	Store(path string, content []byte) error
+	List(path string) (versions s3.Versions, err error)
+	Delete(path string) error
+}
+
+func New(s3Client S3Client, versionsToKeep int) Backuper {
 	return Backuper{
 		s3Client:       s3Client,
 		versionsToKeep: versionsToKeep,

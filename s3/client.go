@@ -5,13 +5,6 @@ import (
 	goamzs3 "github.com/mitchellh/goamz/s3"
 )
 
-type S3Client interface {
-	Store(path string, content []byte) error
-	List(path string) (versions Versions, err error)
-	Delete(path string) error
-	Get(path string) ([]byte, error)
-}
-
 type Client struct {
 	s3     *goamzs3.S3
 	bucket *goamzs3.Bucket
