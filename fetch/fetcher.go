@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/tscolari/s3up/s3"
+	"github.com/tscolari/s3kup/s3"
 )
 
 type Fetcher struct {

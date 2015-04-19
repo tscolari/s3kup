@@ -7,9 +7,9 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/tscolari/s3up/backup"
-	"github.com/tscolari/s3up/log"
-	"github.com/tscolari/s3up/s3"
+	"github.com/tscolari/s3kup/backup"
+	"github.com/tscolari/s3kup/log"
+	"github.com/tscolari/s3kup/s3"
 )
 
 func pushCommand() *cobra.Command {

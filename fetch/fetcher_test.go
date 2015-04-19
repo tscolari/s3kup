@@ -3,9 +3,9 @@ package fetch_test
 import (
 	"errors"
 
-	"github.com/tscolari/s3up/fetch"
-	"github.com/tscolari/s3up/s3"
-	"github.com/tscolari/s3up/s3/fakeclient"
+	"github.com/tscolari/s3kup/fetch"
+	"github.com/tscolari/s3kup/s3"
+	"github.com/tscolari/s3kup/s3/fakeclient"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

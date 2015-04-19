@@ -9,7 +9,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
-	"github.com/tscolari/s3up/s3/testhelpers"
+	"github.com/tscolari/s3kup/s3/testhelpers"
 
 	"testing"
 )
@@ -40,7 +40,7 @@ var _ = AfterSuite(func() {
 })
 
 func buildCli() string {
-	cliPath, err := gexec.Build("github.com/tscolari/s3up")
+	cliPath, err := gexec.Build("github.com/tscolari/s3kup")
 	Expect(err).ToNot(HaveOccurred())
 	return cliPath
 }

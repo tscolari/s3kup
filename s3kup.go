@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/tscolari/s3up/commandline"
+	"github.com/tscolari/s3kup/commandline"
 )
 
 func main() {

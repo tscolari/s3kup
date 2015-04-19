@@ -1,6 +1,6 @@
 package list
 
-import "github.com/tscolari/s3up/s3"
+import "github.com/tscolari/s3kup/s3"
 
 type Lister struct {
 	s3 S3Client

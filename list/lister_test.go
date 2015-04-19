@@ -4,9 +4,9 @@ import (
 	"errors"
 	"time"
 
-	"github.com/tscolari/s3up/list"
-	"github.com/tscolari/s3up/s3"
-	"github.com/tscolari/s3up/s3/fakeclient"
+	"github.com/tscolari/s3kup/list"
+	"github.com/tscolari/s3kup/s3"
+	"github.com/tscolari/s3kup/s3/fakeclient"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

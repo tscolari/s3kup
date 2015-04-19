@@ -1,6 +1,6 @@
 package fakeclient
 
-import "github.com/tscolari/s3up/s3"
+import "github.com/tscolari/s3kup/s3"
 
 type Client struct {
 	StoreCall  func(path string, content []byte) error

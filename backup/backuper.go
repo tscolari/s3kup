@@ -5,8 +5,8 @@ import (
 	"sort"
 	"time"
 
-	"github.com/tscolari/s3up/log"
-	"github.com/tscolari/s3up/s3"
+	"github.com/tscolari/s3kup/log"
+	"github.com/tscolari/s3kup/s3"
 )
 
 type Backuper struct {

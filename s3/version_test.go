@@ -3,7 +3,7 @@ package s3_test
 import (
 	"time"
 
-	"github.com/tscolari/s3up/s3"
+	"github.com/tscolari/s3kup/s3"
 
 	goamzs3 "github.com/mitchellh/goamz/s3"
 	. "github.com/onsi/ginkgo"

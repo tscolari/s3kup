@@ -5,9 +5,9 @@ import (
 	goamzs3 "github.com/mitchellh/goamz/s3"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/tscolari/s3up/fetch"
-	"github.com/tscolari/s3up/s3"
-	"github.com/tscolari/s3up/s3/testhelpers"
+	"github.com/tscolari/s3kup/fetch"
+	"github.com/tscolari/s3kup/s3"
+	"github.com/tscolari/s3kup/s3/testhelpers"
 )
 
 var _ = Describe("Fetcher", func() {

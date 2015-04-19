@@ -3,9 +3,9 @@ package integration_test
 import (
 	"code.google.com/p/go-uuid/uuid"
 	goamzs3 "github.com/mitchellh/goamz/s3"
-	"github.com/tscolari/s3up/list"
-	"github.com/tscolari/s3up/s3"
-	"github.com/tscolari/s3up/s3/testhelpers"
+	"github.com/tscolari/s3kup/list"
+	"github.com/tscolari/s3kup/s3"
+	"github.com/tscolari/s3kup/s3/testhelpers"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

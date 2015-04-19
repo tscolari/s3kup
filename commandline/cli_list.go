@@ -7,9 +7,9 @@ import (
 	"github.com/pivotal-golang/bytefmt"
 
 	"github.com/spf13/cobra"
-	"github.com/tscolari/s3up/list"
-	"github.com/tscolari/s3up/log"
-	"github.com/tscolari/s3up/s3"
+	"github.com/tscolari/s3kup/list"
+	"github.com/tscolari/s3kup/log"
+	"github.com/tscolari/s3kup/s3"
 )
 
 func listCommand() *cobra.Command {

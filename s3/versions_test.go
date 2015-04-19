@@ -4,7 +4,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/tscolari/s3up/s3"
+	"github.com/tscolari/s3kup/s3"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

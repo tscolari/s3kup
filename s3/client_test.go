@@ -6,8 +6,8 @@ import (
 
 	"code.google.com/p/go-uuid/uuid"
 
-	"github.com/tscolari/s3up/s3"
-	"github.com/tscolari/s3up/s3/testhelpers"
+	"github.com/tscolari/s3kup/s3"
+	"github.com/tscolari/s3kup/s3/testhelpers"
 
 	goamzs3 "github.com/mitchellh/goamz/s3"
 	. "github.com/onsi/ginkgo"

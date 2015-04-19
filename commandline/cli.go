@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/tscolari/s3up/log"
+	"github.com/tscolari/s3kup/log"
 )
 
 func New() *cobra.Command {
@@ -25,7 +25,7 @@ func New() *cobra.Command {
 
 func mainCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "s3up",
+		Use: "s3kup",
 		Run: func(cmd *cobra.Command, args []string) {
 			initLogger()
 			_, _, _, _, _, err := fetchAndValidateGlobalParams()

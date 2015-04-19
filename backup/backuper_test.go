@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/tscolari/s3up/backup"
-	"github.com/tscolari/s3up/s3"
-	"github.com/tscolari/s3up/s3/fakeclient"
+	"github.com/tscolari/s3kup/backup"
+	"github.com/tscolari/s3kup/s3"
+	"github.com/tscolari/s3kup/s3/fakeclient"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
