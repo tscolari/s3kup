@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/tscolari/s3kup/list"
+	"github.com/tscolari/s3kup/list/fakes"
 	"github.com/tscolari/s3kup/s3"
-	"github.com/tscolari/s3kup/s3/fakeclient"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -14,28 +14,20 @@ import (
 
 var _ = Describe("Lister", func() {
 	var lister list.Lister
-	var s3Client *fakeclient.Client
+	var s3Client *fakes.FakeS3Client
 
 	BeforeEach(func() {
-		s3Client = &fakeclient.Client{}
+		s3Client = new(fakes.FakeS3Client)
 		lister = list.New(s3Client)
 	})
 
 	It("sends the correct request to the s3 client", func() {
-		var listCallPath string
-		s3Client.ListCall = func(path string) (s3.Versions, error) {
-			listCallPath = path
-			return nil, nil
-		}
-
 		lister.List("my-backup")
-		Expect(listCallPath).To(Equal("my-backup"))
+		Expect(s3Client.ListArgsForCall(0)).To(Equal("my-backup"))
 	})
 
 	It("forwards the error if s3 client fails", func() {
-		s3Client.ListCall = func(path string) (s3.Versions, error) {
-			return nil, errors.New("failed here")
-		}
+		s3Client.ListReturns(nil, errors.New("failed here"))
 
 		_, err := lister.List("my-backup")
 		Expect(err).To(MatchError("failed here"))
@@ -48,7 +40,8 @@ var _ = Describe("Lister", func() {
 		BeforeEach(func() {
 			versionOne = time.Now().UnixNano()
 			versionTwo = time.Now().UnixNano()
-			s3Client.ListCall = func(path string) (s3.Versions, error) {
+
+			s3Client.ListStub = func(path string) (s3.Versions, error) {
 				return s3.Versions{
 					s3.Version{BackupName: path, Version: versionOne},
 					s3.Version{BackupName: path, Version: versionTwo},
@@ -72,5 +65,4 @@ var _ = Describe("Lister", func() {
 		})
 
 	})
-
 })

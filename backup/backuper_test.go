@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/tscolari/s3kup/backup"
+	"github.com/tscolari/s3kup/backup/fakes"
 	"github.com/tscolari/s3kup/s3"
-	"github.com/tscolari/s3kup/s3/fakeclient"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -15,47 +15,27 @@ import (
 
 var _ = Describe("Backuper", func() {
 	var backuper backup.Backuper
-	var s3Client *fakeclient.Client
+	var s3Client *fakes.FakeS3Client
 
 	BeforeEach(func() {
-		s3Client = &fakeclient.Client{}
+		s3Client = new(fakes.FakeS3Client)
 		backuper = backup.New(s3Client, 3)
 	})
 
 	Describe("#Backup", func() {
-		var receivedFileName string
-		var receivedContent []byte
-
-		BeforeEach(func() {
-			s3Client.StoreCall = func(path string, content []byte) error {
-				receivedFileName = path
-				receivedContent = content
-				return nil
-			}
-		})
 
 		It("timestamps the version inside the given filename", func() {
 			err := backuper.Backup("file", []byte("content"))
 			Expect(err).ToNot(HaveOccurred())
-			Expect(receivedFileName).To(MatchRegexp(fmt.Sprintf("^%s/\\d{19}$", "file")))
+			path, _ := s3Client.StoreArgsForCall(0)
+			Expect(path).To(MatchRegexp(fmt.Sprintf("^%s/\\d{19}$", "file")))
 		})
 
 		Context("when something fails", func() {
-			var storeCallCount int
-
-			BeforeEach(func() {
-				storeCallCount = 0
-				s3Client.StoreCall = func(path string, content []byte) error {
-					storeCallCount++
-					return nil
-				}
-			})
 
 			Context("when storing the file fails", func() {
 				It("returns back the error", func() {
-					s3Client.StoreCall = func(path string, content []byte) error {
-						return errors.New("failed to store")
-					}
+					s3Client.StoreReturns(errors.New("failed to store"))
 					err := backuper.Backup("file", []byte("content"))
 					Expect(err).To(MatchError("failed to store"))
 				})
@@ -64,9 +44,7 @@ var _ = Describe("Backuper", func() {
 			Context("when listing the versions fails", func() {
 
 				BeforeEach(func() {
-					s3Client.ListCall = func(path string) (s3.Versions, error) {
-						return nil, errors.New("Failed to list")
-					}
+					s3Client.StoreReturns(errors.New("Failed to list"))
 				})
 
 				It("returns back the error", func() {
@@ -76,25 +54,21 @@ var _ = Describe("Backuper", func() {
 
 				It("still stores the file", func() {
 					backuper.Backup("file", []byte("content"))
-					Expect(storeCallCount).To(Equal(1))
+					Expect(s3Client.StoreCallCount()).To(Equal(1))
 				})
 			})
 
 			Context("when deleting old versions fails", func() {
 				BeforeEach(func() {
-					s3Client.DeleteCall = func(path string) error {
-						return errors.New("Failed to delete")
+					s3Client.DeleteReturns(errors.New("Failed to delete"))
+					versions := s3.Versions{
+						s3.Version{BackupName: "myfile", Version: 20010101},
+						s3.Version{BackupName: "myfile", Version: 20000101},
+						s3.Version{BackupName: "myfile", Version: 20020101},
+						s3.Version{BackupName: "myfile", Version: 20150101},
 					}
 
-					s3Client.ListCall = func(path string) (s3.Versions, error) {
-						versions := s3.Versions{
-							s3.Version{BackupName: "myfile", Version: 20010101},
-							s3.Version{BackupName: "myfile", Version: 20000101},
-							s3.Version{BackupName: "myfile", Version: 20020101},
-							s3.Version{BackupName: "myfile", Version: 20150101},
-						}
-						return versions, nil
-					}
+					s3Client.ListReturns(versions, nil)
 				})
 
 				It("returns back the error", func() {
@@ -104,7 +78,7 @@ var _ = Describe("Backuper", func() {
 
 				It("still store the file", func() {
 					backuper.Backup("file", []byte("content"))
-					Expect(storeCallCount).To(Equal(1))
+					Expect(s3Client.StoreCallCount()).To(Equal(1))
 				})
 			})
 		})
@@ -122,82 +96,58 @@ var _ = Describe("Backuper", func() {
 
 			Context("when there is less versions than `versionsToKeep`", func() {
 				It("does not delete any previous version", func() {
-					s3Client.ListCall = func(path string) (s3.Versions, error) {
-						return s3.Versions{}, nil
-					}
-
-					s3Client.DeleteCall = func(path string) error {
-						deleteCallsCount++
-						return nil
-					}
+					s3Client.ListReturns(s3.Versions{}, nil)
+					s3Client.DeleteReturns(nil)
 
 					err := backuper.Backup("file", []byte("content"))
 					Expect(err).ToNot(HaveOccurred())
-					Expect(deleteCallsCount).To(Equal(0))
+					Expect(s3Client.DeleteCallCount()).To(Equal(0))
 				})
 			})
 
 			Context("when there is as many versions as `versionsToKeep`", func() {
 				It("deletes the oldest version", func() {
-					var deletedVersion string
-
-					s3Client.ListCall = func(path string) (s3.Versions, error) {
-						baseTime := time.Now()
-						versions := s3.Versions{
-							s3.Version{BackupName: "myfile", Version: 20010101, Path: "myfile/20010101", LastModified: baseTime.Add(2 * time.Minute)},
-							s3.Version{BackupName: "myfile", Version: 20000101, Path: "myfile/20000101", LastModified: baseTime.Add(1 * time.Minute)},
-							s3.Version{BackupName: "myfile", Version: 20020101, Path: "myfile/20020101", LastModified: baseTime.Add(3 * time.Minute)},
-							s3.Version{BackupName: "myfile", Version: 20150101, Path: "myfile/20150101", LastModified: baseTime.Add(4 * time.Minute)},
-						}
-						return versions, nil
+					baseTime := time.Now()
+					versions := s3.Versions{
+						s3.Version{BackupName: "myfile", Version: 20010101, Path: "myfile/20010101", LastModified: baseTime.Add(2 * time.Minute)},
+						s3.Version{BackupName: "myfile", Version: 20000101, Path: "myfile/20000101", LastModified: baseTime.Add(1 * time.Minute)},
+						s3.Version{BackupName: "myfile", Version: 20020101, Path: "myfile/20020101", LastModified: baseTime.Add(3 * time.Minute)},
+						s3.Version{BackupName: "myfile", Version: 20150101, Path: "myfile/20150101", LastModified: baseTime.Add(4 * time.Minute)},
 					}
 
-					s3Client.DeleteCall = func(path string) error {
-						deletedVersion = path
-						deleteCallsCount++
-						return nil
-					}
+					s3Client.ListReturns(versions, nil)
 
 					err := backuper.Backup("file", []byte("content"))
 					Expect(err).ToNot(HaveOccurred())
-					Expect(deleteCallsCount).To(Equal(1))
-					Expect(deletedVersion).To(Equal("myfile/20000101"))
+					Expect(s3Client.DeleteCallCount()).To(Equal(1))
+					deletedPath := s3Client.DeleteArgsForCall(0)
+					Expect(deletedPath).To(Equal("myfile/20000101"))
 				})
 			})
 
 			Context("when there is more versions than `versionsToKeep`", func() {
 				It("deletes as many old versions as necessary to keep it the same as `versionsToKeep`", func() {
-					deletedVersions := []string{}
 					baseTime := time.Now()
 
-					s3Client.ListCall = func(path string) (s3.Versions, error) {
-						versions := s3.Versions{
-							s3.Version{BackupName: "myfile", Version: 20010101, Path: "myfile/20010101", LastModified: baseTime.Add(4 * time.Minute)},
-							s3.Version{BackupName: "myfile", Version: 20030101, Path: "myfile/20030101", LastModified: baseTime.Add(6 * time.Minute)},
-							s3.Version{BackupName: "myfile", Version: 20000101, Path: "myfile/20000101", LastModified: baseTime.Add(3 * time.Minute)},
-							s3.Version{BackupName: "myfile", Version: 20020101, Path: "myfile/20020101", LastModified: baseTime.Add(5 * time.Minute)},
-							s3.Version{BackupName: "myfile", Version: 19990101, Path: "myfile/19990101", LastModified: baseTime.Add(2 * time.Minute)},
-							s3.Version{BackupName: "myfile", Version: 20150101, Path: "myfile/20150101", LastModified: baseTime.Add(7 * time.Minute)},
-							s3.Version{BackupName: "myfile", Version: 19950101, Path: "myfile/19950101", LastModified: baseTime.Add(1 * time.Minute)},
-						}
-						return versions, nil
+					versions := s3.Versions{
+						s3.Version{BackupName: "myfile", Version: 20010101, Path: "myfile/20010101", LastModified: baseTime.Add(4 * time.Minute)},
+						s3.Version{BackupName: "myfile", Version: 20030101, Path: "myfile/20030101", LastModified: baseTime.Add(6 * time.Minute)},
+						s3.Version{BackupName: "myfile", Version: 20000101, Path: "myfile/20000101", LastModified: baseTime.Add(3 * time.Minute)},
+						s3.Version{BackupName: "myfile", Version: 20020101, Path: "myfile/20020101", LastModified: baseTime.Add(5 * time.Minute)},
+						s3.Version{BackupName: "myfile", Version: 19990101, Path: "myfile/19990101", LastModified: baseTime.Add(2 * time.Minute)},
+						s3.Version{BackupName: "myfile", Version: 20150101, Path: "myfile/20150101", LastModified: baseTime.Add(7 * time.Minute)},
+						s3.Version{BackupName: "myfile", Version: 19950101, Path: "myfile/19950101", LastModified: baseTime.Add(1 * time.Minute)},
 					}
 
-					s3Client.DeleteCall = func(path string) error {
-						deletedVersions = append(deletedVersions, path)
-						deleteCallsCount++
-						return nil
-					}
+					s3Client.ListReturns(versions, nil)
 
 					err := backuper.Backup("file", []byte("content"))
 					Expect(err).ToNot(HaveOccurred())
-					Expect(deleteCallsCount).To(Equal(4))
-					Expect(deletedVersions).To(Equal([]string{
-						"myfile/19950101",
-						"myfile/19990101",
-						"myfile/20000101",
-						"myfile/20010101",
-					}))
+					Expect(s3Client.DeleteCallCount()).To(Equal(4))
+					Expect(s3Client.DeleteArgsForCall(0)).To(Equal("myfile/19950101"))
+					Expect(s3Client.DeleteArgsForCall(1)).To(Equal("myfile/19990101"))
+					Expect(s3Client.DeleteArgsForCall(2)).To(Equal("myfile/20000101"))
+					Expect(s3Client.DeleteArgsForCall(3)).To(Equal("myfile/20010101"))
 				})
 			})
 		})
