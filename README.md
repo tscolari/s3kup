@@ -127,6 +127,24 @@ e.g:
   s3kup pull 1427571015905296950 --access-key X --secret-key Y --bucket-name Z --file-name my-pg-bkp > dump.bz2
 ```
 
+ENCRYPTION
+==========
+
+Because everything is piped in and out, it's easy to encrypt backuped content using third-party tools,
+
+For example, using `openssl`:
+
+```
+# backing up
+pg_dump | bzip2 -c | openssl rsautl -encrypt -inkey ./test_rsa | s3kup push ... --file-name my-pg-bkp
+# or
+pg_dump | bzip2 -c | openssl rsautl -encrypt -pubin -inkey ./test_rsa.pub | s3kup push ... --file-name my-pg-bkp
+
+# restoring
+s3kup pull 1427571015905296950 ... --file-name my-pg-bkp | openssl rsautl -decrypt -inkey ./test_rsa > dump.bz2
+```
+
+
 LICENSE
 =======
 
