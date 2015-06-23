@@ -10,7 +10,7 @@ import (
 
 func TestIntegrationTest(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Fetch > Integration Suite")
+	RunSpecs(t, "Integration > List Suite")
 }
 
 var s3Server *s3test.Server

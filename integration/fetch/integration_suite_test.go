@@ -8,9 +8,9 @@ import (
 	"testing"
 )
 
-func TestIntegration(t *testing.T) {
+func TestIntegrationTest(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Backup > Integration Suite")
+	RunSpecs(t, "Integration > Fetch Suite")
 }
 
 var s3Server *s3test.Server

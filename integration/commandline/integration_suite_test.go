@@ -16,7 +16,7 @@ import (
 
 func TestCommandline(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Commandline > Integration Suite")
+	RunSpecs(t, "Integration > Commandline Suite")
 }
 
 var s3Client *s3.S3
