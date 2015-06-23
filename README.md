@@ -16,7 +16,7 @@ Available Commands:
   help        Help about any command
 
 Flags:
-  -i, --access-key="": AWS Access Key
+  -a, --access-key="": AWS Access Key
   -b, --bucket-name="": Target S3 bucket
   -e, --endpoint-url="https://s3.amazonaws.com": the s3 region endpoint url (see http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region)
   -n, --file-name="": How the file will be called on s3
@@ -39,7 +39,7 @@ Flags:
   -k, --versions-to-keep=5: Number of versions to keep
 
 Global Flags:
-  -i, --access-key="": AWS Access Key
+  -a, --access-key="": AWS Access Key
   -b, --bucket-name="": Target S3 bucket
   -e, --endpoint-url="https://s3.amazonaws.com": the s3 region endpoint url (see http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region)
   -n, --file-name="": How the file will be called on s3
@@ -74,7 +74,7 @@ Flags:
   -h, --help=false: help for list
 
 Global Flags:
-  -i, --access-key="": AWS Access Key
+  -a, --access-key="": AWS Access Key
   -b, --bucket-name="": Target S3 bucket
   -e, --endpoint-url="https://s3.amazonaws.com": the s3 region endpoint url (see http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region)
   -n, --file-name="": How the file will be called on s3
@@ -105,7 +105,7 @@ Flags:
   -h, --help=false: help for pull
 
 Global Flags:
-  -i, --access-key="": AWS Access Key
+  -a, --access-key="": AWS Access Key
   -b, --bucket-name="": Target S3 bucket
   -e, --endpoint-url="https://s3.amazonaws.com": the s3 region endpoint url (see http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region)
   -n, --file-name="": How the file will be called on s3

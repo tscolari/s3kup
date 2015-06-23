@@ -24,7 +24,7 @@ var _ = Describe("Cli > list", func() {
 
 	BeforeEach(func() {
 		bucketName := fmt.Sprintf("bucket%d", rand.Int())
-		listCmd = exec.Command(cli, "list", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
+		listCmd = exec.Command(cli, "list", "-a", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
 		bucket = s3Bucket(accessKey, secretKey, bucketName)
 		bucket.PutBucket("")
 	})

@@ -33,7 +33,7 @@ var _ = Describe("Cli > push", func() {
 		var bucket *s3.Bucket
 
 		BeforeEach(func() {
-			backupCmd = exec.Command(cli, "push", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "3")
+			backupCmd = exec.Command(cli, "push", "-a", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "3")
 			bucket = s3Bucket(accessKey, secretKey, bucketName)
 			bucket.PutBucket("")
 		})
@@ -58,17 +58,17 @@ var _ = Describe("Cli > push", func() {
 
 			It("keeps only the number of versions specified", func() {
 				firstRunInputCmd := exec.Command("echo", "'store my data'")
-				firstRunCmd := exec.Command(cli, "push", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "2")
+				firstRunCmd := exec.Command(cli, "push", "-a", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "2")
 				_, err := runPipedCmdsAndReturnLastOutput(firstRunInputCmd, firstRunCmd)
 				Expect(err).ToNot(HaveOccurred())
 
 				secondRunInputCmd := exec.Command("echo", "'store my data'")
-				secondRunCmd := exec.Command(cli, "push", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "2")
+				secondRunCmd := exec.Command(cli, "push", "-a", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "2")
 				_, err = runPipedCmdsAndReturnLastOutput(secondRunInputCmd, secondRunCmd)
 				Expect(err).ToNot(HaveOccurred())
 
 				thirdRunInputCmd := exec.Command("echo", "'store my data'")
-				thirdRunCmd := exec.Command(cli, "push", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "2")
+				thirdRunCmd := exec.Command(cli, "push", "-a", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "2")
 				_, err = runPipedCmdsAndReturnLastOutput(thirdRunInputCmd, thirdRunCmd)
 				Expect(err).ToNot(HaveOccurred())
 
@@ -79,7 +79,7 @@ var _ = Describe("Cli > push", func() {
 
 			Context("on verbose mode", func() {
 				It("outputs the steps", func() {
-					backupCmd := exec.Command(cli, "push", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "3", "--verbose")
+					backupCmd := exec.Command(cli, "push", "-a", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "3", "--verbose")
 					output, err := runPipedCmdsAndReturnLastOutput(inputCmd, backupCmd)
 					Expect(err).ToNot(HaveOccurred())
 
@@ -92,7 +92,7 @@ var _ = Describe("Cli > push", func() {
 
 		Context("when there is invalid or missing args", func() {
 			It("fails if no file name is given", func() {
-				backupCmd = exec.Command(cli, "push", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-k", "3")
+				backupCmd = exec.Command(cli, "push", "-a", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-k", "3")
 				output, err := runPipedCmdsAndReturnLastOutput(inputCmd, backupCmd)
 				Expect(err).To(HaveOccurred())
 
@@ -100,7 +100,7 @@ var _ = Describe("Cli > push", func() {
 			})
 
 			It("fails if versions to keep is equal to zero", func() {
-				backupCmd = exec.Command(cli, "push", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "0")
+				backupCmd = exec.Command(cli, "push", "-a", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "0")
 				output, err := runPipedCmdsAndReturnLastOutput(inputCmd, backupCmd)
 				Expect(err).To(HaveOccurred())
 
@@ -108,7 +108,7 @@ var _ = Describe("Cli > push", func() {
 			})
 
 			It("fails if versions to keep is less than zero", func() {
-				backupCmd = exec.Command(cli, "push", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "-3")
+				backupCmd = exec.Command(cli, "push", "-a", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName, "-k", "-3")
 				output, err := runPipedCmdsAndReturnLastOutput(inputCmd, backupCmd)
 				Expect(err).To(HaveOccurred())
 

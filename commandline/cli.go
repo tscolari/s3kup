@@ -40,7 +40,7 @@ func mainCommand() *cobra.Command {
 
 func setGlobalFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringP("endpoint-url", "e", "https://s3.amazonaws.com", "the s3 region endpoint url (see http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region)")
-	cmd.PersistentFlags().StringP("access-key", "i", "", "AWS Access Key")
+	cmd.PersistentFlags().StringP("access-key", "a", "", "AWS Access Key")
 	cmd.PersistentFlags().StringP("secret-key", "s", "", "AWS Secret Key")
 	cmd.PersistentFlags().StringP("bucket-name", "b", "", "Target S3 bucket")
 	cmd.PersistentFlags().StringP("file-name", "n", "", "How the file will be called on s3")

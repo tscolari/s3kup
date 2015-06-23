@@ -25,7 +25,7 @@ var _ = Describe("Cli > pull", func() {
 
 	BeforeEach(func() {
 		bucketName = fmt.Sprintf("bucket%d", rand.Int())
-		pullCmd = exec.Command(cli, "pull", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
+		pullCmd = exec.Command(cli, "pull", "-a", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
 		bucket = s3Bucket(accessKey, secretKey, bucketName)
 		bucket.PutBucket("")
 
@@ -66,7 +66,7 @@ var _ = Describe("Cli > pull", func() {
 		})
 
 		It("fetches that version's content", func() {
-			pullCmd = exec.Command(cli, "pull", "10000003", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
+			pullCmd = exec.Command(cli, "pull", "10000003", "-a", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
 			output, err := pullCmd.CombinedOutput()
 			Expect(err).ToNot(HaveOccurred())
 
@@ -75,7 +75,7 @@ var _ = Describe("Cli > pull", func() {
 
 		Context("when the version doesn't exist", func() {
 			It("prints an error", func() {
-				pullCmd = exec.Command(cli, "pull", "19999993", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
+				pullCmd = exec.Command(cli, "pull", "19999993", "-a", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
 				output, err := pullCmd.CombinedOutput()
 				Expect(err).To(HaveOccurred())
 

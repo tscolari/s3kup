@@ -28,7 +28,7 @@ var _ = Describe("Cli", func() {
 	BeforeEach(func() {
 		bucketName = fmt.Sprintf("bucket%d", rand.Int())
 		inputCmd = exec.Command("echo", "'store my data'")
-		backupCmd = exec.Command(cli, "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
+		backupCmd = exec.Command(cli, "-a", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
 
 		bucketName = fmt.Sprintf("bucket%d", rand.Int())
 		bucket := s3Bucket(accessKey, secretKey, bucketName)
@@ -37,7 +37,7 @@ var _ = Describe("Cli", func() {
 
 	Context("when there is invalid or missing args", func() {
 		It("fails if no bucket name is given", func() {
-			backupCmd = exec.Command(cli, "-i", accessKey, "-s", secretKey, "-e", s3EndpointURL, "-n", backupName)
+			backupCmd = exec.Command(cli, "-a", accessKey, "-s", secretKey, "-e", s3EndpointURL, "-n", backupName)
 			output, err := runPipedCmdsAndReturnLastOutput(inputCmd, backupCmd)
 			Expect(err).To(HaveOccurred())
 
@@ -53,7 +53,7 @@ var _ = Describe("Cli", func() {
 		})
 
 		It("fails if no secret key is given", func() {
-			backupCmd = exec.Command(cli, "-i", accessKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
+			backupCmd = exec.Command(cli, "-a", accessKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
 			output, err := runPipedCmdsAndReturnLastOutput(inputCmd, backupCmd)
 			Expect(err).To(HaveOccurred())
 
@@ -69,8 +69,8 @@ var _ = Describe("Cli", func() {
 		var inputData []byte
 
 		BeforeEach(func() {
-			pushCmd = exec.Command(cli, "push", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
-			pullCmd = exec.Command(cli, "pull", "-i", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
+			pushCmd = exec.Command(cli, "push", "-a", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
+			pullCmd = exec.Command(cli, "pull", "-a", accessKey, "-s", secretKey, "-b", bucketName, "-e", s3EndpointURL, "-n", backupName)
 		})
 
 		Context("Text files", func() {
