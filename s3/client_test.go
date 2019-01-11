@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 
-	"code.google.com/p/go-uuid/uuid"
+	"github.com/google/uuid"
 
 	"github.com/tscolari/s3kup/s3"
 	"github.com/tscolari/s3kup/s3/testhelpers"

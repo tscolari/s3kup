@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/pivotal-golang/bytefmt"
+	"code.cloudfoundry.org/bytefmt"
 
 	"github.com/spf13/cobra"
 	"github.com/tscolari/s3kup/list"

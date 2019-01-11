@@ -1,7 +1,7 @@
 package integration_test
 
 import (
-	"code.google.com/p/go-uuid/uuid"
+	"github.com/google/uuid"
 	goamzs3 "github.com/mitchellh/goamz/s3"
 	"github.com/tscolari/s3kup/list"
 	"github.com/tscolari/s3kup/s3"
